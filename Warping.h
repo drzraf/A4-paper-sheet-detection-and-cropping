@@ -10,18 +10,18 @@
 #ifndef _Warping_
 #define _Warping_
 #include "Hough.h"
-#include<Eigen/Dense>
+
+#ifdef Success
+  #undef Success
+#endif
+
+#include <eigen3/Eigen/Dense>
 
 class Warping {
 private:
 	CImg<float> dest_A4; // 210mm*297mm -> 410*594
 	CImg<float> src;
-	const float W = 410, H = 594;
-	// destination corners
-	const float u1 = 0, v1 = 0, // top-left
-		u2 = W - 1, v2 = 0, // top-right
-		u3 = 0, v3 = H - 1, // bottom-left
-		u4 = W - 1, v4 = H - 1; // bottom-right
+
 	float x1, y1, x2, y2, x3, y3, x4, y4; // source corners
 	float a, b, c, d, e, f, m, l; // parameters
 

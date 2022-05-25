@@ -9,9 +9,10 @@
 #pragma once
 #ifndef _Hough_
 #define _Hough_
-#include "CImg.h"
-#include<iostream>
-#include<vector>
+#include <CImg.h>
+#include <iostream>
+#include <vector>
+
 using namespace cimg_library;
 struct HoughEdge {
 	int angle, rho, val;
@@ -73,7 +74,7 @@ private:
 	void orderCorners();
 	void displayCornersAndLines();
 public:
-	Hough(char * filePath);
+	Hough(const char * filePath, int preview);
 	CImg<float> getRGBImg() { return rgb_img; }
 	CImg<float> getMarkedImg() { return marked_img; }
 	std::vector<Point> getOrderedCorners() { return ordered_corners;}

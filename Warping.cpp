@@ -9,7 +9,7 @@
 #include "Warping.h"
 Warping::Warping(Hough hough) {
 	src = hough.getRGBImg();
-	CImg<double> temp(W, H, 1, 3, 0);
+	CImg<double> temp(src.width(), src.height(), 1, 3, 0);
 	dest_A4 = temp;
 	std::vector<Point>  corners = hough.getOrderedCorners();
 	x1 = corners[0].x, y1 = corners[0].y; // top-left
@@ -24,6 +24,15 @@ void Warping::perspectiveTransform() {
 	Eigen::MatrixXf UV(8, 1);
 	Eigen::MatrixXf M = Eigen::MatrixXf::Constant(8, 1, 0);
 	Eigen::MatrixXf A(8, 8);
+
+	const float W = src.width(), H = src.height();
+
+	// destination corners
+	const float u1 = 0, v1 = 0, // top-left
+		u2 = W - 1, v2 = 0, // top-right
+		u3 = 0, v3 = H - 1, // bottom-left
+		u4 = W - 1, v4 = H - 1; // bottom-right
+
 	UV << u1, v1, u2, v2, u3, v3, u4, v4;
 	A << x1, y1, 1, 0,  0,  0, -u1*x1, -u1*y1,
 		 0,  0,  0, x1, y1, 1, -v1*x1, -v1*y1,

@@ -36,22 +36,22 @@ bool cmp_lines(Line l1, Line l2) {
 }
 
 /* Constructor */
-Hough::Hough(char* filePath) {
+Hough::Hough(const char* filePath, int preview) {
 	// init
-	rgb_img.load_bmp(filePath);
+	rgb_img.load(filePath);
 	w = rgb_img.width();
 	h = rgb_img.height();
 	gray_img = gradients = CImg<double>(w, h, 1, 1, 0);
 	hough_space = CImg<double>(360, distance(w, h), 1, 1, 0);
 
 	rgb2gray();
-	gray_img.blur(BLUR_SIGMA).display();// .save("dataset1/blur.bmp");
+	gray_img.blur(BLUR_SIGMA); // .display();// .save("dataset1/blur.bmp");
 	getGradient();
-	gradients.display();// .save("dataset1/gradient.bmp");
+	if (preview) gradients.display();// .save("dataset1/gradient.bmp");
 	houghTransform();
-	hough_space.display();// .save("dataset1/hough_space.bmp");
+	if (preview) hough_space.display();// .save("dataset1/hough_space.bmp");
 	getHoughEdges();
-	hough_space.display();// .save("dataset1/hough_space2.bmp");
+	if (preview) hough_space.display();// .save("dataset1/hough_space2.bmp");
 	getLines();
 	getCorners();
 	orderCorners();
@@ -195,13 +195,13 @@ void Hough::getHoughEdges() {
 		if (hough_edges.size() != 4) {
 			std::cout << "ERROR: Bug in function void Hough::getHoughEdges()!\
             Please check the ifelse statement to filter out four hough_edges." << std::endl;
-			exit(-2);
+			throw "wrong hough_edges";
 		}
 	}
 	else if (hough_edges.size() < 4) {
 		std::cout << "ERROR: Please set parameter Q larger in file \
 			'hough_transform.h' to filter out four edges!" << std::endl;
-		exit(-1);
+		throw "missing hough_edges";
 	}
 }
 
@@ -282,7 +282,8 @@ void Hough::orderCorners() {
 	if (ordered_corners.size() < 4) {
 		std::cout << "ERROR: Can not detect four ordered_corners in function \
         void Hough::orderCorners(). Please try to adjust parameters." << std::endl;
-		exit(-3);
+		throw "missing corners";
+
 	}
 	x1 = ordered_corners[0].x, y1 = ordered_corners[0].y; // top-left
 	x2 = ordered_corners[1].x, y2 = ordered_corners[1].y; // top-right
